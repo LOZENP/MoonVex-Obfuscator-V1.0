@@ -4,6 +4,7 @@
 
 local util = require("util")
 local namegen = require("namegen")
+local compiler = require("namecompiler")
 local encoder = require("encoder")
 local config = require("config")
 
@@ -113,11 +114,19 @@ function vm.parseCode(code, options)
 end
 
 function vm.generateBytecode(data, keys, options)
-    local vn = namegen.generateMultiple(35)
+    -- Configure compiler for long names
+    compiler.configure({
+        forceLength = 25,       -- Make names at least 25 characters
+        useDelimiter = false    -- No underscores, just smash together
+    })
     
-    -- Generate vararg parameters
+    -- Use compiler for long variable names
+    compiler.prepare()
+    local vn = compiler.generateMultiple(35)
+    
+    -- Generate vararg parameters with long names
     local varargCount = util.randomRange(options.varargMin, options.varargMax)
-    local varargParams = namegen.generateMultiple(varargCount)
+    local varargParams = compiler.generateMultiple(varargCount)
     local varargStr = table.concat(varargParams, ",")
     
     -- Encrypt instructions
