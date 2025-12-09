@@ -3,6 +3,7 @@
 -- Abstract Syntax Tree implementation for Lua
 
 local Ast = {}
+Ast.__index = Ast
 
 -- AST Node Kinds
 Ast.AstKind = {
